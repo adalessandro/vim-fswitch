@@ -362,3 +362,31 @@ com! FSBelow      :call FSwitch('%', 'wincmd j')
 com! FSSplitBelow :call FSwitch('%', 'let cursb=&sb | set nosb | split | wincmd j | if cursb | set sb | endif')
 com! FSTab        :call FSwitch('%', 'tabedit')
 
+"
+" FSwitchTag
+"
+" Externally accessible function that we use to switch to alternate files
+" using ctags.
+"
+" Note that tags must include an entry for the base file name of every source
+" file, so you should run ctags with option: --extra=+f
+"
+" Also, you may want to add a keyboard shortcut to this function in your
+" .vimrc, like this:
+"
+"     map <silent> <C-H> :FSTag<CR>
+"
+function! FSwitchTag(filename)
+    let justfile = s:FSGetFileNameWithoutExtension(a:filename)
+    let extensions = s:FSGetExtensions()
+    for currentExt in extensions
+        let filenameTag = justfile . '.' . currentExt
+        try
+            execute 'tag ' . filenameTag
+        catch
+            " Silently skip
+        endtry
+    endfor
+endfunction
+
+com! FSTag        :call FSwitchTag('%')
