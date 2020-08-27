@@ -377,6 +377,13 @@ com! FSTab        :call FSwitch('%', 'tabedit')
 "     map <silent> <C-H> :FSTag<CR>
 "
 function! FSwitchTag(filename)
+    if !exists("b:fswitchdst") || strlen(b:fswitchdst) == 0
+        throw 'b:fswitchdst not set - read :help fswitch'
+    endif
+    if (!exists("b:fswitchlocs")   || strlen(b:fswitchlocs) == 0) &&
+     \ (!exists("b:fsdisablegloc") || b:fsdisablegloc == 0)
+        throw "There are no locations defined (see :h fswitchlocs and :h fsdisablegloc)"
+    endif
     let justfile = s:FSGetFileNameWithoutExtension(a:filename)
     let extensions = s:FSGetExtensions()
     for currentExt in extensions
